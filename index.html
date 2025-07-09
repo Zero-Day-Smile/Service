@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100px;
+      margin: 0;
+      background: transparent;
+    }
+    .sos-button {
+      padding: 10px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background-color: #ff4d4d;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .sos-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(255, 77, 77, 0.7);
+    }
+    .sos-button:active {
+      transform: scale(0.95);
+    }
+    .alert {
+      display: none;
+      position: absolute;
+      top: 60px;
+      font-size: 12px;
+      color: #ff4d4d;
+      font-weight: bold;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <button class="sos-button" onclick="triggerSOS()">SOS</button>
+  <div class="alert" id="alert">SOS Sent!</div>
+  <script>
+    function triggerSOS() {
+      const alert = document.getElementById('alert');
+      alert.style.display = 'block';
+      setTimeout(() => { alert.style.display = 'none'; }, 3000);
+    }
+  </script>
+</body>
+</html>
