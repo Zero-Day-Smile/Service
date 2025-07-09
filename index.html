@@ -1,144 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dravik Adventure Guide</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@700&family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/4c2b2a3a56.js" crossorigin="anonymous"></script>
+
   <style>
+    :root {
+      --forest: #1e5631;
+      --mountain: #3b4d61;
+      --snow: #6ca9df;
+      --desert: #f4c97a;
+      --home: #8dd5f6;
+    }
+
+    * { box-sizing: border-box; }
     body {
+      margin: 0;
+      font-family: 'Source Sans Pro', sans-serif;
+      background: #d3ebf5;
+      height: 100vh;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 200px;
-      margin: 0;
-      background: #f0f2f5;
-      font-family: Arial, sans-serif;
     }
-    .dashboard {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      padding: 15px;
-      width: 280px;
-      text-align: center;
-    }
-    .dashboard h3 {
-      margin: 0 0 10px;
-      color: #333;
-      font-size: 16px;
-    }
-    .button-group {
+
+    .container {
+      width: 420px;
+      height: 600px;
+      border-radius: 25px;
+      overflow: hidden;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
       display: flex;
-      justify-content: space-around;
-      margin-bottom: 10px;
+      flex-direction: column;
+      position: relative;
+      background-color: var(--home);
+      transition: background-color 0.6s ease;
     }
-    .dashboard-button {
-      padding: 8px 15px;
-      font-size: 12px;
-      font-weight: bold;
-      color: white;
+
+    .container[data-bg="wild"] { background-color: var(--forest); }
+    .container[data-bg="mountains"] { background-color: var(--mountain); }
+    .container[data-bg="snow"] { background-color: var(--snow); }
+    .container[data-bg="desert"] { background-color: var(--desert); }
+
+    .nav {
+      background: linear-gradient(135deg, #243c5a, #1c5230);
+      color: #fff;
+      padding: 18px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      font-family: 'Lora', serif;
+      font-weight: 700;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand i { font-size: 22px; }
+
+    .menu {
+      display: flex;
+      gap: 14px;
+    }
+
+    .menu button {
+      background: none;
       border: none;
-      border-radius: 20px;
+      color: #fff;
+      font-size: 20px;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: transform 0.3s, filter 0.3s;
     }
-    .dashboard-button:hover {
+
+    .menu button:hover {
+      transform: scale(1.25);
+    }
+
+    .menu button.active {
+      filter: drop-shadow(0 0 6px #fffd);
+      transform: scale(1.3);
+    }
+
+    .page {
+      flex-grow: 1;
+      position: relative;
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      display: none;
+      padding: 30px;
+      text-shadow: 0 3px 6px rgba(0, 0, 0, 0.7);
+    }
+
+    .page.active {
+      display: block;
+      animation: fadeIn 0.9s ease-out;
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.55));
+      z-index: 0;
+    }
+
+    .page-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+
+    .page-icon {
+      font-size: 70px;
+      margin-bottom: 20px;
+      animation: bounceIn 1s;
+    }
+
+    .page h2 {
+      font-family: 'Lora', serif;
+      font-size: 24px;
+      margin: 0 0 15px;
+    }
+
+    .page p {
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .learn-btn, .sos-btn {
+      margin-top: 20px;
+      background: linear-gradient(135deg, #243c5a, #1c5230);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .sos-btn {
+      background: red;
+    }
+
+    .learn-btn:hover, .sos-btn:hover {
       transform: scale(1.1);
     }
-    .guide-button { background-color: #28a745; }
-    .map-button { background-color: #007bff; }
-    .sos-button { background-color: #ff4d4d; }
-    .output {
-      font-size: 12px;
-      color: #333;
-      min-height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .map-pin {
+
+    .tip-text {
       display: none;
-      font-size: 20px;
-      color: #007bff;
-      animation: pinDrop 0.5s ease-in;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #2e3d4f;
+      padding: 10px;
+      border-radius: 10px;
+      margin-top: 15px;
+      animation: slideIn 0.5s;
     }
-    .sos-active {
+
+    .tip-text.active {
+      display: block;
+    }
+
+    .funny-msg {
       display: none;
-      color: #ff4d4d;
+      margin-top: 15px;
+      font-size: 16px;
+      color: #ffeb3b;
       font-weight: bold;
-      animation: pulse 1.5s infinite;
+      animation: bounceIn 1s ease-in-out;
     }
-    @keyframes pinDrop {
-      0% { transform: translateY(-20px); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
+
+    footer {
+      background: linear-gradient(135deg, #243c5a, #1c5230);
+      color: white;
+      text-align: center;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 600;
     }
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes slideIn {
+      0% { opacity: 0; transform: translateX(20px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes redFlash {
+      0%, 100% { background-color: rgba(255, 0, 0, 0); }
+      50% { background-color: rgba(255, 0, 0, 0.4); }
+    }
+
+    .sos-flash {
+      animation: redFlash 0.5s alternate 6;
     }
   </style>
 </head>
 <body>
-  <div class="dashboard">
-    <h3>Dravik Travel Dashboard</h3>
-    <div class="button-group">
-      <button class="dashboard-button guide-button" onclick="showGuide()">Guide</button>
-      <button class="dashboard-button map-button" onclick="showMap()">Map</button>
-      <button class="dashboard-button sos-button" onclick="toggleSOS()">SOS</button>
+  <div class="container" data-bg="home">
+    <div class="nav">
+      <div class="brand"><i class="fas fa-compass"></i> Dravik</div>
+      <div class="menu">
+        <button id="nav-home" onclick="switchPage('home')" title="Home">🏠</button>
+        <button id="nav-wild" onclick="switchPage('wild')" title="Wild Forests">🌲</button>
+        <button id="nav-mountains" onclick="switchPage('mountains')" title="Mountains">🏔️</button>
+        <button id="nav-snow" onclick="switchPage('snow')" title="Snowy Peaks">❄️</button>
+        <button id="nav-desert" onclick="switchPage('desert')" title="Deserts">☀️</button>
+      </div>
     </div>
-    <div class="output" id="output"></div>
-    <div class="map-pin" id="map-pin">📍</div>
-    <div class="sos-active" id="sos-active">SOS Active!</div>
+
+    <div class="page active" id="home" style="background-image: url('https://media.giphy.com/media/xT0xeJpnrWC4XWblEk/giphy.gif');">
+      <div class="page-content">
+        <i class="fas fa-globe page-icon"></i>
+        <p>Your all‑in‑one companion for wild travel, camping and survival.</p>
+        <button class="learn-btn" onclick="showTip('home-tip')">Explore Now</button>
+        <p class="tip-text" id="home-tip">Use live visuals and tools powered by Dravik to guide your journey.</p>
+        <button class="sos-btn" onclick="triggerSOS()">🚨 SOS</button>
+        <p class="funny-msg" id="sos-response">🛸 Aliens summoned! Help is on the way! 🧑‍🚒</p>
+      </div>
+    </div>
+
+    <div class="page" id="wild" style="background-image: url('https://media.giphy.com/media/3ohzdYJK1wAdPWVk88/giphy.gif');">
+      <div class="page-content">
+        <i class="fas fa-campground page-icon"></i>
+        <h2>Into the Wild</h2>
+        <p>Offline campsite maps, wildlife alerts and eco‑friendly checklists.</p>
+        <button class="learn-btn" onclick="showTip('wild-tip')">Learn More</button>
+        <p class="tip-text" id="wild-tip">Pack light, stay green and trust Dravik’s forest essentials.</p>
+      </div>
+    </div>
+
+    <div class="page" id="mountains" style="background-image: url('https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif');">
+      <div class="page-content">
+        <i class="fas fa-mountain page-icon"></i>
+        <h2>Rugged Mountains</h2>
+        <p>Topographic trails, elevation data and avalanche warnings offline.</p>
+        <button class="learn-btn" onclick="showTip('mountains-tip')">Learn More</button>
+        <p class="tip-text" id="mountains-tip">Use altitude-aware routing to save energy on steep climbs.</p>
+      </div>
+    </div>
+
+    <div class="page" id="snow" style="background-image: url('https://media.giphy.com/media/xT0GqFvdU2bTtH1jTW/giphy.gif');">
+      <div class="page-content">
+        <i class="fas fa-snowflake page-icon"></i>
+        <h2>Snowy Expeditions</h2>
+        <p>SOS beacons, white-out navigation and cold‑weather survival kits.</p>
+        <button class="learn-btn" onclick="showTip('snow-tip')">Learn More</button>
+        <p class="tip-text" id="snow-tip">Enable emergency sharing so rescue teams can locate you fast.</p>
+      </div>
+    </div>
+
+    <div class="page" id="desert" style="background-image: url('https://media.giphy.com/media/YTbZzCkRQCEJa/giphy.gif');">
+      <div class="page-content">
+        <i class="fas fa-sun page-icon"></i>
+        <h2>Desert Journeys</h2>
+        <p>Heat‑safe routes, oasis markers and hydration watch‑outs.</p>
+        <button class="learn-btn" onclick="showTip('desert-tip')">Learn More</button>
+        <p class="tip-text" id="desert-tip">Travel at dawn, rest midday and download Dravik desert packs offline.</p>
+      </div>
+    </div>
   </div>
+
+  <footer>Created by Amish Kumar © 2025</footer>
+
   <script>
-    const guides = [
-      "Pack light for Himalayan treks: essentials only!",
-      "Use offline maps for remote trails.",
-      "Carry a whistle for emergency signaling."
-    ];
-    let sosActive = false;
-
-    function showGuide() {
-      const output = document.getElementById('output');
-      const mapPin = document.getElementById('map-pin');
-      const sosActiveDiv = document.getElementById('sos-active');
-      mapPin.style.display = 'none';
-      sosActiveDiv.style.display = 'none';
-      output.textContent = guides[Math.floor(Math.random() * guides.length)];
-      output.style.display = 'flex';
+    const buttons = document.querySelectorAll('.menu button');
+    function switchPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      document.querySelector('.container').setAttribute('data-bg', id);
+      buttons.forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`nav-${id}`).classList.add('active');
     }
-
-    function showMap() {
-      const output = document.getElementById('output');
-      const mapPin = document.getElementById('map-pin');
-      const sosActiveDiv = document.getElementById('sos-active');
-      output.textContent = '';
-      sosActiveDiv.style.display = 'none';
-      mapPin.style.display = 'block';
-      setTimeout(() => { mapPin.style.display = 'none'; }, 2000);
+    function showTip(id) {
+      document.getElementById(id).classList.toggle('active');
     }
-
-    function toggleSOS() {
-      const output = document.getElementById('output');
-      const map rms of visual design and interactivity:
-- **Graphical Representation**: The dashboard mimics a simplified version of Dravik’s Home screen (based on your past work on it), with a clean, modern layout and buttons styled to reflect travel, maps, and safety features.
-- **Simulation of Features**: 
-  - **Guide Button**: Shows a random travel tip, simulating Dravik’s offline guides (inspired by your markdown-based guide system).
-  - **Map Button**: Triggers a pin-drop animation, representing the map integration you’re building with tools like Mapbox.
-  - **SOS Button**: Toggles an “SOS Active” state with a pulsing effect, reflecting the Safety SOS feature you’ve implemented.
-- **Dravik-Inspired Design**: Uses a clean, white card with a shadow effect and vibrant colors (green for guides, blue for maps, red for SOS) to evoke a premium Flutter UI, aligning with your goal of a professional travel app.
-- **Engaging Interactivity**: Multiple buttons and animations (fade-in text, pin drop, pulsing SOS) encourage exploration, showcasing your ability to create dynamic interfaces.
-
-### Customization Options
-- **Colors**: If Dravik’s UI uses a specific palette (e.g., blue from your Home screen), update the CSS colors (e.g., `.guide-button { background-color: #your-color; }`).
-- **More Guides**: Add more tips to the `guides` array to reflect Dravik’s content (e.g., trekking safety or location-specific advice).
-- **Animation Tweaks**: Adjust animation durations (e.g., change `setTimeout` values) or styles (e.g., slide-in for the map pin).
-- **Add Features**: Include a mock weather widget or travel checklist toggle to further simulate Dravik’s functionality.
-
-### If You Prefer Something Else
-If this dashboard isn’t what you had in mind, here are alternatives inspired by Dravik or your other projects:
-- **Interactive Map Preview**: A canvas-based map where clicking drops pins at random coordinates, simulating Dravik’s map integration with a more graphical focus.
-- **Nirbhay AI Classifier**: A text input where users type an emergency message, and it displays “Urgent” or “Non-Urgent” with a visual effect, showcasing your NLP work.
-- **Travel Itinerary Builder**: A form where users select a destination (e.g., “Himalayas”) and get a mock itinerary, reflecting Dravik’s travel planning features.
-
-Let me know if you want to tweak the dashboard (e.g., different features, colors, or animations), try one of the alternatives, or need help with setup! You can also share your GitHub Pages URL (e.g., `https://zero-day-smile.github.io/dravik-demo/`) or profile URL after updating, and I’ll verify it looks and works great.
+    function triggerSOS() {
+      const msg = document.getElementById('sos-response');
+      msg.style.display = 'block';
+      const container = document.querySelector('.container');
+      container.classList.add('sos-flash');
+      setTimeout(() => container.classList.remove('sos-flash'), 3000);
+    }
+    document.getElementById('nav-home').classList.add('active');
+  </script>
+</body>
+</html>
