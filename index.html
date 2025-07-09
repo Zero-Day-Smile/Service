@@ -8,36 +8,68 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100px;
+      height: 200px;
       margin: 0;
-      background: transparent;
+      background: #f0f2f5;
+      font-family: Arial, sans-serif;
     }
-    .sos-button {
-      padding: 10px 20px;
+    .dashboard {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 15px;
+      width: 280px;
+      text-align: center;
+    }
+    .dashboard h3 {
+      margin: 0 0 10px;
+      color: #333;
       font-size: 16px;
+    }
+    .button-group {
+      display: flex;
+      justify-content: space-around;
+      margin-bottom: 10px;
+    }
+    .dashboard-button {
+      padding: 8px 15px;
+      font-size: 12px;
       font-weight: bold;
       color: white;
-      background-color: #ff4d4d;
       border: none;
-      border-radius: 25px;
+      border-radius: 20px;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: transform 0.2s;
     }
-    .sos-button:hover {
+    .dashboard-button:hover {
       transform: scale(1.1);
-      box-shadow: 0 0 15px rgba(255, 77, 77, 0.7);
     }
-    .sos-button:active {
-      transform: scale(0.95);
-    }
-    .alert {
-      display: none;
-      position: absolute;
-      top: 60px;
+    .guide-button { background-color: #28a745; }
+    .map-button { background-color: #007bff; }
+    .sos-button { background-color: #ff4d4d; }
+    .output {
       font-size: 12px;
+      color: #333;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .map-pin {
+      display: none;
+      font-size: 20px;
+      color: #007bff;
+      animation: pinDrop 0.5s ease-in;
+    }
+    .sos-active {
+      display: none;
       color: #ff4d4d;
       font-weight: bold;
       animation: pulse 1.5s infinite;
+    }
+    @keyframes pinDrop {
+      0% { transform: translateY(-20px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
     }
     @keyframes pulse {
       0% { opacity: 1; }
@@ -47,14 +79,66 @@
   </style>
 </head>
 <body>
-  <button class="sos-button" onclick="triggerSOS()">SOS</button>
-  <div class="alert" id="alert">SOS Sent!</div>
+  <div class="dashboard">
+    <h3>Dravik Travel Dashboard</h3>
+    <div class="button-group">
+      <button class="dashboard-button guide-button" onclick="showGuide()">Guide</button>
+      <button class="dashboard-button map-button" onclick="showMap()">Map</button>
+      <button class="dashboard-button sos-button" onclick="toggleSOS()">SOS</button>
+    </div>
+    <div class="output" id="output"></div>
+    <div class="map-pin" id="map-pin">📍</div>
+    <div class="sos-active" id="sos-active">SOS Active!</div>
+  </div>
   <script>
-    function triggerSOS() {
-      const alert = document.getElementById('alert');
-      alert.style.display = 'block';
-      setTimeout(() => { alert.style.display = 'none'; }, 3000);
+    const guides = [
+      "Pack light for Himalayan treks: essentials only!",
+      "Use offline maps for remote trails.",
+      "Carry a whistle for emergency signaling."
+    ];
+    let sosActive = false;
+
+    function showGuide() {
+      const output = document.getElementById('output');
+      const mapPin = document.getElementById('map-pin');
+      const sosActiveDiv = document.getElementById('sos-active');
+      mapPin.style.display = 'none';
+      sosActiveDiv.style.display = 'none';
+      output.textContent = guides[Math.floor(Math.random() * guides.length)];
+      output.style.display = 'flex';
     }
-  </script>
-</body>
-</html>
+
+    function showMap() {
+      const output = document.getElementById('output');
+      const mapPin = document.getElementById('map-pin');
+      const sosActiveDiv = document.getElementById('sos-active');
+      output.textContent = '';
+      sosActiveDiv.style.display = 'none';
+      mapPin.style.display = 'block';
+      setTimeout(() => { mapPin.style.display = 'none'; }, 2000);
+    }
+
+    function toggleSOS() {
+      const output = document.getElementById('output');
+      const map rms of visual design and interactivity:
+- **Graphical Representation**: The dashboard mimics a simplified version of Dravik’s Home screen (based on your past work on it), with a clean, modern layout and buttons styled to reflect travel, maps, and safety features.
+- **Simulation of Features**: 
+  - **Guide Button**: Shows a random travel tip, simulating Dravik’s offline guides (inspired by your markdown-based guide system).
+  - **Map Button**: Triggers a pin-drop animation, representing the map integration you’re building with tools like Mapbox.
+  - **SOS Button**: Toggles an “SOS Active” state with a pulsing effect, reflecting the Safety SOS feature you’ve implemented.
+- **Dravik-Inspired Design**: Uses a clean, white card with a shadow effect and vibrant colors (green for guides, blue for maps, red for SOS) to evoke a premium Flutter UI, aligning with your goal of a professional travel app.
+- **Engaging Interactivity**: Multiple buttons and animations (fade-in text, pin drop, pulsing SOS) encourage exploration, showcasing your ability to create dynamic interfaces.
+
+### Customization Options
+- **Colors**: If Dravik’s UI uses a specific palette (e.g., blue from your Home screen), update the CSS colors (e.g., `.guide-button { background-color: #your-color; }`).
+- **More Guides**: Add more tips to the `guides` array to reflect Dravik’s content (e.g., trekking safety or location-specific advice).
+- **Animation Tweaks**: Adjust animation durations (e.g., change `setTimeout` values) or styles (e.g., slide-in for the map pin).
+- **Add Features**: Include a mock weather widget or travel checklist toggle to further simulate Dravik’s functionality.
+
+### If You Prefer Something Else
+If this dashboard isn’t what you had in mind, here are alternatives inspired by Dravik or your other projects:
+- **Interactive Map Preview**: A canvas-based map where clicking drops pins at random coordinates, simulating Dravik’s map integration with a more graphical focus.
+- **Nirbhay AI Classifier**: A text input where users type an emergency message, and it displays “Urgent” or “Non-Urgent” with a visual effect, showcasing your NLP work.
+- **Travel Itinerary Builder**: A form where users select a destination (e.g., “Himalayas”) and get a mock itinerary, reflecting Dravik’s travel planning features.
+
+Let me know if you want to tweak the dashboard (e.g., different features, colors, or animations), try one of the alternatives, or need help with setup! You can also share your GitHub Pages URL (e.g., `https://zero-day-smile.github.io/dravik-demo/`) or profile URL after updating, and I’ll verify it looks and works great.
